@@ -1,4 +1,4 @@
-function [OutputRGB, OutputNii, OutputMono] = CreateSurfProjFromNii(pathToInputNii, MipThickness, TitleText)
+function [OutputRGB, OutputNii, OutputMono] = CreateProjectionsFromDevMap(pathToInputNii, MipThickness, TitleText)
 %% Environment
 
 %Load  Nii-File
@@ -7,204 +7,32 @@ InputNii = load_nii(pathToInputNii);
 ScalingFactor = max(InputNii.img(:)) * 256;
 Img3DInteger  = uint8(InputNii.img / max(InputNii.img(:)) * 256-1);
 
-MatrixSize = size(Img3DInteger);
+
+MatrixSize = size(InputNii.img);
+
+
 EvenMatrixSize = MatrixSize+mod(MatrixSize,2);
+disp(EvenMatrixSize(1)/2);
 
 DescriptionText = 'Z-transformierte Abweichungen des Tau-Tracer-Uptakes von einem Normkollektiv';
 
-% LateralProjections
+%% LateralProjections
 
-LateralProjection1 = zeros(MatrixSize(2),MatrixSize(3));
+LateralProjection1 = monoProjectionPlaneFromDevMap(InputNii,MipThickness,'lateral',1,(EvenMatrixSize(1)/2));
+LateralProjection2 = monoProjectionPlaneFromDevMap(InputNii,MipThickness,'lateral',MatrixSize(1),(EvenMatrixSize(1)/2+1));
+LateralProjection3 = monoProjectionPlaneFromDevMap(InputNii,MipThickness,'lateral',(EvenMatrixSize(1)/2),1);
+LateralProjection4 = monoProjectionPlaneFromDevMap(InputNii,MipThickness,'lateral',(EvenMatrixSize(1)/2+1),MatrixSize(1));
 
-
-for i=1:size(LateralProjection1, 1)
-    for j=1:size(LateralProjection1, 2)
-        
-        
-        clear VoxelValue;
-        CountNotZero = 0;
-        BrainFound = false;
-        
-        %Run through first half of image
-        for SliceSelector = 1:(EvenMatrixSize(1)/2)
-            
-            if InputNii.img(SliceSelector,i,j) > 0
-                BrainFound = true;
-            end
-            if BrainFound == true
-                CountNotZero = CountNotZero + 1;
-            end
-            if CountNotZero > (MipThickness)
-                break
-            end
-            
-            VoxelValue(SliceSelector) = InputNii.img(SliceSelector,i,j);
-            
-            
-        end
-        LateralProjection1(i,j) = max(VoxelValue);
-        
-    end
-end
-
-LateralProjection2 = zeros(MatrixSize(2),MatrixSize(3));
-
-for i=1:size(LateralProjection2, 1)
-    for j=1:size(LateralProjection2, 2)
-        
-        clear VoxelValue;
-        CountNotZero = 0;
-        BrainFound = false;
-        
-        %Run through first half of image
-        for SliceSelector = MatrixSize(1):-1:(EvenMatrixSize(1)/2+1)
-            
-            if InputNii.img(SliceSelector,i,j) > 0
-                BrainFound = true;
-            end
-            if BrainFound == true
-                CountNotZero = CountNotZero + 1;
-            end
-            if CountNotZero > (MipThickness)
-                break
-            end
-            
-            VoxelValue(SliceSelector) = InputNii.img(SliceSelector,i,j);
-            
-            
-        end
-        LateralProjection2(i,j) = max(VoxelValue);
-        
-        
-    end
-end
-
-LateralProjection3 = zeros(MatrixSize(2),MatrixSize(3));
-
-for i=1:size(LateralProjection3, 1)
-    for j=1:size(LateralProjection3, 2)
-        
-        
-        clear VoxelValue;
-        CountNotZero = 0;
-        BrainFound = false;
-        
-        %Run through first half of image
-        for SliceSelector = (EvenMatrixSize(1)/2):-1:1
-            
-            if InputNii.img(SliceSelector,i,j) > 0
-                BrainFound = true;
-            end
-            if BrainFound == true
-                CountNotZero = CountNotZero + 1;
-            end
-            if CountNotZero > (MipThickness)
-                break
-            end
-            
-            VoxelValue(SliceSelector) = InputNii.img(SliceSelector,i,j);
-            
-            
-        end
-        LateralProjection3(i,j) = max(VoxelValue);
-        
-    end
-end
-
-
-LateralProjection4 = zeros(MatrixSize(2),MatrixSize(3));
-for i=1:size(LateralProjection4, 1)
-    for j=1:size(LateralProjection4, 2)
-        
-        
-        clear VoxelValue;
-        CountNotZero = 0;
-        BrainFound = false;
-        
-        %Run through first half of image
-        for SliceSelector = (EvenMatrixSize(1)/2+1):MatrixSize(1)
-            
-            if InputNii.img(SliceSelector,i,j) > 0
-                BrainFound = true;
-            end
-            if BrainFound == true
-                CountNotZero = CountNotZero + 1;
-            end
-            if CountNotZero > (MipThickness)
-                break
-            end
-            
-            VoxelValue(SliceSelector) = InputNii.img(SliceSelector,i,j);
-            
-            
-        end
-        LateralProjection4(i,j) = max(VoxelValue);
-        
-    end
-end
 
 %% Axial projections
 
+AxialProjection1 = monoProjectionPlaneFromDevMap(InputNii,MipThickness,'axial',1,(EvenMatrixSize(3)/2));
+AxialProjection2 = monoProjectionPlaneFromDevMap(InputNii,MipThickness,'axial',MatrixSize(3),(EvenMatrixSize(3)/2+1));
 
-AxialProjection1 = zeros(MatrixSize(1),MatrixSize(2));
-
-for i=1:size(AxialProjection1, 1)
-    for j=1:size(AxialProjection1, 2)
-        
-        
-        clear VoxelValue;
-        CountNotZero = 0;
-        
-        %Run through first half of image
-        for SliceSelector = 1:(EvenMatrixSize(3)/2)
-            
-            if InputNii.img(i,j, SliceSelector) > 0
-                CountNotZero = CountNotZero + 1;
-            end
-            if CountNotZero > MipThickness
-                break
-            end
-            
-            VoxelValue(SliceSelector) = InputNii.img(i,j, SliceSelector);
-            
-            
-        end
-        AxialProjection1(i,j) = max(VoxelValue);
-        
-    end
-end
-
-AxialProjection2 = zeros(MatrixSize(1),MatrixSize(2));
-
-for i=1:size(AxialProjection2, 1)
-    for j=1:size(AxialProjection2, 2)
-        
-        
-        clear VoxelValue;
-        CountNotZero = 0;
-        
-        %Run through first half of image
-        for SliceSelector = MatrixSize(3):-1:(EvenMatrixSize(3)/2+1)
-            
-            if InputNii.img(i,j, SliceSelector) > 0
-                CountNotZero = CountNotZero + 1;
-            end
-            if CountNotZero > MipThickness
-                break
-            end
-            
-            VoxelValue(SliceSelector) = InputNii.img(i,j, SliceSelector);
-            
-            
-        end
-        AxialProjection2(i,j) = max(VoxelValue);
-        
-    end
-end
 
 %% Cutoff für z-Transformationen setzen.
-CutoffRight = 20;
-CutoffLeft = 5;
+CutoffRight = 15;
+CutoffLeft = 4;
 
 
 %% Write brain contours to projections
