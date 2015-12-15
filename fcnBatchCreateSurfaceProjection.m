@@ -19,7 +19,7 @@ for FileNumber = 1:numberOfFiles
     
     %% Call function to create surface projections
     
-    [OutputRGB, OutputNii, OutputMono] = CreateSurfProjFromNii([pathImagesToProcessFolder subj(FileNumber).name], 10, subj(FileNumber).name);
+    [OutputRGB, OutputNii, OutputMono] = CreateProjectionsFromDevMap([pathImagesToProcessFolder subj(FileNumber).name], 10, subj(FileNumber).name);
     
     
     %% Save output

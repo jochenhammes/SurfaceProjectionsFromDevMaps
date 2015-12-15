@@ -40,8 +40,11 @@ for i=1:size(projectedPlaneOutput, 1)
             else
                 CurrentVoxel = InputNii.img(i,j, SliceSelector);
             end
+            if CurrentVoxel < 0
+                CurrentVoxel = 0;
+            end
             
-            
+            % Eliminate negative Voxels, whereever they should come from...
             if CurrentVoxel > 0
                 BrainFound = true;
             end
