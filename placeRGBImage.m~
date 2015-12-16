@@ -1,6 +1,0 @@
-function outputImage = placeRGBImage(baseImage, imageToPlace)
-%   places an RGB image o
-
-
-end
-
