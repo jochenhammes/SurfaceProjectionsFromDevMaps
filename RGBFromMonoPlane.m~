@@ -3,7 +3,7 @@ function [ RGBPlane ] = RGBFromMonoPlane( monoPlane, colorMap, cutOff, cutOffMax
 
 %contourOverlay: Dateiname der Contourdate, die mitangezeigt werden soll.
 %cutOff:  Z-Wert, der als oberes Limit der color-LUT angzeigt werden soll.
-%cutOffMax: Maximaler Z-Wert-Threshold, der im Output-File vorkommt.
+%cutOffMax: Z-Wert, der als bei anderen RGB
 
 %% Thresholding, wenn cutOff und cutOffMax angegeben sind.
 

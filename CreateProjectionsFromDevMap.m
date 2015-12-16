@@ -8,7 +8,8 @@ MatrixSize = size(InputNii.img);
 EvenMatrixSize = MatrixSize+mod(MatrixSize,2);
 
 DescriptionText = 'Z-transformierte Abweichungen des Tau-Tracer-Uptakes von einem Normkollektiv';
-
+cutOffLow = 4;
+cutOffHigh = 20;
 
 ySize=600;
 xSize=700;
@@ -50,7 +51,7 @@ countourString{6} = 'TopViewBrainContour.bmp';
 
 %% Creation and placement of RGB-Surface Projections 
 for i=1:6
-    ProjectionsRGB{i} = RGBFromMonoPlane(ProjectionsMono{i}, myMap, 2, countourString{i});
+    ProjectionsRGB{i} = RGBFromMonoPlane(ProjectionsMono{i}, myMap, cutOffLow, cutOffHigh, countourString{i});
     if mod(i,2) == 0
         NewRGB = placeRGBImage(NewRGB, imrotate(ProjectionsRGB{i}, 90), 10+100*(i-1),100); 
     else
@@ -60,7 +61,7 @@ end
 
 for i=1:6
 
-    ProjectionsRGB{i} = RGBFromMonoPlane(ProjectionsMono{i}, myMap, 20, countourString{i});
+    ProjectionsRGB{i} = RGBFromMonoPlane(ProjectionsMono{i}, myMap, cutOffHigh, cutOffHigh, countourString{i});
         if mod(i,2) == 0
         NewRGB = placeRGBImage(NewRGB, imrotate(ProjectionsRGB{i}, 90), 10+100*(i-1),250); 
     else

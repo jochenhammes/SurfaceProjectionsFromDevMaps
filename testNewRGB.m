@@ -15,7 +15,7 @@ newPartMap(:,3) = 0:0.0156:0.5;
 myMap=vertcat(newPartMap,myMap);
 
 myMap(1:2,:)=0;
-myMap((end-2):end,:)=1;
+%myMap((end-2):end,:)=1;
 
 
 
