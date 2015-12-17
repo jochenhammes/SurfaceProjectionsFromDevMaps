@@ -10,9 +10,10 @@ function [ RGBPlane ] = RGBFromMonoPlane( monoPlane, colorMap, cutOff, cutOffMax
 if exist('cutOff','var') && ~isempty(cutOff)
     monoPlane(monoPlane>cutOff) = cutOff;
     %disp(max(monoPlane(:)));
-    monoPlane = monoPlane/cutOffMax*cutOff;
+    %monoPlane = monoPlane/cutOffMax*cutOff;
+    monoPlane = monoPlane/cutOffMax;
     %disp(max(monoPlane(:)));
-    monoPlane = monoPlane/max(monoPlane(:));
+    %monoPlane = monoPlane/max(monoPlane(:));
     
 end;
 
