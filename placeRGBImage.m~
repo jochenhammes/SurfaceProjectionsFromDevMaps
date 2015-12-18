@@ -1,11 +1,19 @@
 function outputImage = placeRGBImage(baseImage, imageToPlace,x,y, transparent)
 %   places an RGB image onto another RGB-image
 
+
 xSize = size(imageToPlace,2);
 ySize = size(imageToPlace,1);
-
 outputImage = baseImage;
 
-outputImage((1+y):(y+ySize),(1+x):(x+xSize),:) = imageToPlace(:,:,:);
+if exist('transparent','var')
+    for i = 1 to ySize
+        for j = 1:xS
+    
+else    
+    outputImage((1+y):(y+ySize),(1+x):(x+xSize),:) = imageToPlace(:,:,:);
+end;
+
+
 end
 

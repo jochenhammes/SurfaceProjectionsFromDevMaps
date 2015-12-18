@@ -98,11 +98,14 @@ for i=1:12
     CurrentSliceMono = monoProjectionPlaneFromDevMap(InputNii,10,'axial',5*(i-1)+1,5*i);
     CurrentSliceRGB = RGBFromMonoPlane(CurrentSliceMono, myMap);
 
-    NewRGB = placeRGBImage(NewRGB, fliplr(imrotate(CurrentSliceRGB, 90)), horizontalOffset,yRow(3)+verticalOffset); 
-    
     %Place T1-MRI    
     CurrentSliceMNI_T1 = monoProjectionPlaneFromDevMap(MNI_T1,10,'axial',5*i-1,5*i);
     NewRGB = placeMonoOnRGB(NewRGB, fliplr(imrotate(CurrentSliceMNI_T1, 90)), horizontalOffset,yRow(3)+verticalOffset); 
+    
+    %Place Z-Map 
+    NewRGB = placeRGBImage(NewRGB, fliplr(imrotate(CurrentSliceRGB, 90)), horizontalOffset,yRow(3)+verticalOffset, true); 
+    
+
 end
 
 
@@ -113,48 +116,48 @@ NewRGB = placeRGBImage(NewRGB, ColorBar, xOffsetColorBar,yRow(1));
 NewRGB = placeRGBImage(NewRGB, ColorBar, xOffsetColorBar,yRow(2));
 NewRGB = placeRGBImage(NewRGB, ColorBar, xOffsetColorBar,yRow(3));
 
-% %% Write text to image
-% 
-% 
-% if ~exist ('TitleText', 'var')
-%     TitleText = 'No filename specified';
-% else
-%     TitleText = strrep(TitleText,'wRepacked_','');
-%     TitleText = strrep(TitleText,'.nii','');
-% end
-% 
-% %Title Text
-% NewRGB = AddTextToImage(NewRGB,TitleText, [1 10], textColor,'Arial', 20);
-% 
-% %Thresholds to colorbars
-% NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',cutOffLow), [yRow(1) xOffsetColorBarText], textColor,'Arial', 16);
-% NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(1)+100) xOffsetColorBarText], textColor,'Arial', 16);
-% 
-% NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',cutOffHigh), [yRow(2) xOffsetColorBarText], textColor,'Arial', 16);
-% NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(2)+100) xOffsetColorBarText], textColor,'Arial', 16);
-% 
-% NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',maxVoxelValue), [yRow(3) xOffsetColorBarText], textColor,'Arial', 16);
-% NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(3)+100) xOffsetColorBarText], textColor,'Arial', 16);
-% 
-% % image descriptions, i.e. "L lateral", "above"...
-% descriptionString{1} = 'L lateral';
-% descriptionString{2} = 'R lateral';
-% descriptionString{3} = 'L mesial';
-% descriptionString{4} = 'R mesial';
-% descriptionString{5} = 'below';
-% descriptionString{6} = 'above';
-% 
-% for i=1:6
-%      NewRGB = AddTextToImage(NewRGB,descriptionString{i}, [(yRow(1)-20) (25+100*(i-1))], textColor,'Arial', 16);
-% end
-% for i=1:6
-%      NewRGB = AddTextToImage(NewRGB,descriptionString{i}, [(yRow(2)-20) (25+100*(i-1))], textColor,'Arial', 16);
-% end
-% 
-% 
-% % DescriptionText and MIP thickness
-% NewRGB = AddTextToImage(NewRGB, DescriptionText, [30 10], textColor,'Arial', 16);
-% NewRGB = AddTextToImage(NewRGB, ['3DSSPs with MIP Thickness: ' num2str(MipThickness)], [55 10], textColor,'Arial', 16);
+%% Write text to image
+
+
+if ~exist ('TitleText', 'var')
+    TitleText = 'No filename specified';
+else
+    TitleText = strrep(TitleText,'wRepacked_','');
+    TitleText = strrep(TitleText,'.nii','');
+end
+
+%Title Text
+NewRGB = AddTextToImage(NewRGB,TitleText, [1 10], textColor,'Arial', 20);
+
+%Thresholds to colorbars
+NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',cutOffLow), [yRow(1) xOffsetColorBarText], textColor,'Arial', 16);
+NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(1)+100) xOffsetColorBarText], textColor,'Arial', 16);
+
+NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',cutOffHigh), [yRow(2) xOffsetColorBarText], textColor,'Arial', 16);
+NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(2)+100) xOffsetColorBarText], textColor,'Arial', 16);
+
+NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',maxVoxelValue), [yRow(3) xOffsetColorBarText], textColor,'Arial', 16);
+NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(3)+100) xOffsetColorBarText], textColor,'Arial', 16);
+
+% image descriptions, i.e. "L lateral", "above"...
+descriptionString{1} = 'L lateral';
+descriptionString{2} = 'R lateral';
+descriptionString{3} = 'L mesial';
+descriptionString{4} = 'R mesial';
+descriptionString{5} = 'below';
+descriptionString{6} = 'above';
+
+for i=1:6
+     NewRGB = AddTextToImage(NewRGB,descriptionString{i}, [(yRow(1)-20) (25+100*(i-1))], textColor,'Arial', 16);
+end
+for i=1:6
+     NewRGB = AddTextToImage(NewRGB,descriptionString{i}, [(yRow(2)-20) (25+100*(i-1))], textColor,'Arial', 16);
+end
+
+
+% DescriptionText and MIP thickness
+NewRGB = AddTextToImage(NewRGB, DescriptionText, [30 10], textColor,'Arial', 16);
+NewRGB = AddTextToImage(NewRGB, ['3DSSPs with MIP Thickness: ' num2str(MipThickness)], [55 10], textColor,'Arial', 16);
 
 
 %% return result bitmap
