@@ -1,4 +1,4 @@
-function [ RGBPlane ] = RGBFromMonoPlane( monoPlane, colorMap, cutOff, cutOffMax, contourOverlay)
+function [ RGBPlane ] = RGBFromMonoPlane( monoPlane, colorMap, cutOff, contourOverlay)
 %Creates RGBImage from MonoImage
 
 %contourOverlay: Dateiname der Contourdate, die mitangezeigt werden soll.
@@ -11,7 +11,7 @@ if exist('cutOff','var') && ~isempty(cutOff)
     monoPlane(monoPlane>cutOff) = cutOff;
     %disp(max(monoPlane(:)));
     %monoPlane = monoPlane/cutOffMax*cutOff;
-    monoPlane = monoPlane/cutOffMax;
+    monoPlane = monoPlane/cutOff;
     %disp(max(monoPlane(:)));
     %monoPlane = monoPlane/max(monoPlane(:));
     

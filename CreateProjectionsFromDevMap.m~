@@ -6,6 +6,8 @@ InputNii = load_nii(pathToInputNii);
 MNI_T1 = load_nii('MNI_T1_79_95_68.nii');
 
 maxVoxelValue = max(InputNii.img(:));
+upperThreshholdSlices = maxVoxelValue/2;
+lowerThreshholdS
 
 MatrixSize = size(InputNii.img);
 EvenMatrixSize = MatrixSize+mod(MatrixSize,2);
@@ -15,12 +17,12 @@ DescriptionText = 'Z-transformed deviation of 18F-T807/AV1451-uptake compared to
 cutOffLow = 4;
 cutOffHigh = 20;
 
-ySize=650;
-xSize=700;
+ySize=690;
+xSize=670;
 
 yRow(1) = 130;
-yRow(2)  = 310;
-yRow(3)  = 450;
+yRow(2)  = 300;
+yRow(3)  = 490;
 
 xOffsetColorBar = 610;
 xOffsetColorBarText = 630;
@@ -68,7 +70,7 @@ countourString{6} = 'TopViewBrainContour.bmp';
 
 % Surface Projections with low threshhold for colormap. (cutOffLow)
 for i=1:6
-    ProjectionsRGB{i} = RGBFromMonoPlane(ProjectionsMono{i}, myMap, cutOffLow, cutOffLow, countourString{i});
+    ProjectionsRGB{i} = RGBFromMonoPlane(ProjectionsMono{i}, myMap, cutOffLow, countourString{i});
     if mod(i,2) == 0
         NewRGB = placeRGBImage(NewRGB, imrotate(ProjectionsRGB{i}, 90), 10+100*(i-1),yRow(1)); 
     else
@@ -80,7 +82,7 @@ end
 % Surface Projections with high threshhold for colormap. (cutOffHigh)
 for i=1:6
 
-    ProjectionsRGB{i} = RGBFromMonoPlane(ProjectionsMono{i}, myMap, cutOffHigh, cutOffHigh, countourString{i});
+    ProjectionsRGB{i} = RGBFromMonoPlane(ProjectionsMono{i}, myMap, cutOffHigh, countourString{i});
         if mod(i,2) == 0
         NewRGB = placeRGBImage(NewRGB, imrotate(ProjectionsRGB{i}, 90), 10+100*(i-1),yRow(2)); 
     else
@@ -98,14 +100,15 @@ for i=1:12
         horizontalOffset = 10+100*((i-6)-1);
     end
     CurrentSliceMono = monoProjectionPlaneFromDevMap(InputNii,10,'axial',5*(i-1)+1,5*i);
-    CurrentSliceRGB = RGBFromMonoPlane(CurrentSliceMono, myMap);
+    CurrentSliceRGB = RGBFromMonoPlane(CurrentSliceMono, myMap, upperThreshholdSlices);
 
     %Place T1-MRI    
     CurrentSliceMNI_T1 = monoProjectionPlaneFromDevMap(MNI_T1,10,'axial',5*i-1,5*i);
     NewRGB = placeMonoOnRGB(NewRGB, fliplr(imrotate(CurrentSliceMNI_T1, 90)), horizontalOffset,yRow(3)+verticalOffset); 
     
-    %Place Z-Map 
-    NewRGB = placeRGBImage(NewRGB, fliplr(imrotate(CurrentSliceRGB, 90)), horizontalOffset,yRow(3)+verticalOffset, true); 
+    %Place Z-Map with transparency Map
+    transparencyMap = fliplr(imrotate((CurrentSliceMono > maxVoxelValue/8),90));
+    NewRGB = placeRGBImage(NewRGB, fliplr(imrotate(CurrentSliceRGB, 90)), horizontalOffset,yRow(3)+verticalOffset, transparencyMap); 
     
 
 end
@@ -135,17 +138,17 @@ else
 end
 
 %Title Text
-NewRGB = AddTextToImage(NewRGB,TitleText, [1 10], textColor,'Arial', 20);
+NewRGB = AddTextToImage(NewRGB,TitleText, [1 10]*outputScalingFactor, textColor,'Arial', 20*outputScalingFactor);
 
 %Thresholds to colorbars
-NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',cutOffLow), [yRow(1) xOffsetColorBarText], textColor,'Arial', 16);
-NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(1)+100) xOffsetColorBarText], textColor,'Arial', 16);
+NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',cutOffLow), [yRow(1) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(1)+100) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
 
-NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',cutOffHigh), [yRow(2) xOffsetColorBarText], textColor,'Arial', 16);
-NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(2)+100) xOffsetColorBarText], textColor,'Arial', 16);
+NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',cutOffHigh), [yRow(2) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(2)+100) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
 
-NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',maxVoxelValue), [yRow(3) xOffsetColorBarText], textColor,'Arial', 16);
-NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(3)+100) xOffsetColorBarText], textColor,'Arial', 16);
+NewRGB = AddTextToImage(NewRGB,sprintf('%.1f',upperThreshholdSlices), [yRow(3) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+NewRGB = AddTextToImage(NewRGB,'0.0', [(yRow(3)+100) xOffsetColorBarText]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
 
 % image descriptions, i.e. "L lateral", "above"...
 descriptionString{1} = 'L lateral';
@@ -156,16 +159,17 @@ descriptionString{5} = 'below';
 descriptionString{6} = 'above';
 
 for i=1:6
-     NewRGB = AddTextToImage(NewRGB,descriptionString{i}, [(yRow(1)-20) (25+100*(i-1))], textColor,'Arial', 16);
+     NewRGB = AddTextToImage(NewRGB,descriptionString{i}, [(yRow(1)-20) (25+100*(i-1))]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
 end
 for i=1:6
-     NewRGB = AddTextToImage(NewRGB,descriptionString{i}, [(yRow(2)-20) (25+100*(i-1))], textColor,'Arial', 16);
+     NewRGB = AddTextToImage(NewRGB,descriptionString{i}, [(yRow(2)-20) (25+100*(i-1))]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
 end
 
 
 % DescriptionText and MIP thickness
-NewRGB = AddTextToImage(NewRGB, DescriptionText, [30 10], textColor,'Arial', 16);
-NewRGB = AddTextToImage(NewRGB, ['3DSSPs with MIP Thickness: ' num2str(MipThickness)], [55 10], textColor,'Arial', 16);
+NewRGB = AddTextToImage(NewRGB, DescriptionText, [30 10]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+NewRGB = AddTextToImage(NewRGB, ['3DSSPs with MIP Thickness: ' num2str(MipThickness)], [(yRow(1)-50) 10]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
+NewRGB = AddTextToImage(NewRGB, ['Transverse cuts of deviation map. Maximum Z-value: ' sprintf('%.1f', maxVoxelValue)], [(yRow(3)-30) 10]*outputScalingFactor, textColor,'Arial', 16*outputScalingFactor);
 
 
 %% return result bitmap

@@ -1,4 +1,4 @@
-function outputImage = placeRGBImage(baseImage, imageToPlace,x,y, transparent)
+function outputImage = placeRGBImage(baseImage, imageToPlace,x,y, transparencyMap)
 %   places an RGB image onto another RGB-image
 
 
@@ -6,10 +6,10 @@ xSize = size(imageToPlace,2);
 ySize = size(imageToPlace,1);
 outputImage = baseImage;
 
-if exist('transparent','var')
+if exist('transparencyMap','var')
     for i = 1:ySize
         for j = 1:xSize
-            if sum(imageToPlace(i,j,:)) > 0.7
+            if transparencyMap(i,j) > 0
                 outputImage(i+y,j+x,:) = imageToPlace(i,j,:);
             end
         end
