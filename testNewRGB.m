@@ -15,13 +15,16 @@ newPartMap(:,3) = 0:0.0156:0.5;
 myMap=vertcat(newPartMap,myMap);
 
 myMap(1:2,:)=0;
+
+for i = 1:size(myMap, 1)
+    disp(sum(myMap(i,:)));
+end
+
+
+
+
 %myMap((end-2):end,:)=1;
-
-
-
-testPlaneMono = monoProjectionPlaneFromDevMap(InputNii,10,'axial',5,10);
-testPlaneRGB = RGBFromMonoPlane(testPlaneMono, myMap);
-
-NewRGB = placeRGBImage(NewRGB, testPlaneRGB, 10,10);
-
-imshow(NewRGB);
+%testPlaneMono = monoProjectionPlaneFromDevMap(InputNii,10,'axial',5,10);
+%testPlaneRGB = RGBFromMonoPlane(testPlaneMono, myMap);
+%NewRGB = placeRGBImage(NewRGB, testPlaneRGB, 10,10);
+%imshow(NewRGB);
