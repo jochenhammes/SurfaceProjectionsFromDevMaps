@@ -17,7 +17,7 @@ for FileNumber = 1:numberOfFiles
     
     %% Call function to create surface projections
     
-    [OutputRGB, OutputNii, OutputMono] = CreateSurfProjFromNii([pathImagesToProcessFolder subj(FileNumber).name], 10, subj(FileNumber).name);
+    OutputRGB = CreateSurfProjFromNii([pathImagesToProcessFolder subj(FileNumber).name], 10, subj(FileNumber).name);
     
     
     %% Save output
@@ -25,10 +25,10 @@ for FileNumber = 1:numberOfFiles
     
     %Write Bitmaps
     imwrite(OutputRGB, [pathOutputFolder 'SP_RGB'  subj(FileNumber).name '.bmp']);
-    imwrite(OutputMono, [pathOutputFolder 'SP_Mono'  subj(FileNumber).name '.bmp']);
+    %imwrite(OutputMono, [pathOutputFolder 'SP_Mono'  subj(FileNumber).name '.bmp']);
     
     %write Nifti
-    save_nii(OutputNii, [pathOutputFolder 'SP_' subj(FileNumber).name] );
+    %save_nii(OutputNii, [pathOutputFolder 'SP_' subj(FileNumber).name] );
     
 %     %ShowImage
 %     image(DisplayProjectionsRGB);

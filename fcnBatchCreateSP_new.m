@@ -1,4 +1,4 @@
-function runWithSuccess = fcnBatchCreateSurfaceProjection(pathImagesToProcessFolder)
+function runWithSuccess = fcnBatchCreateSP_new(pathImagesToProcessFolder)
 %% Environment
 
 runWithSuccess = false;
@@ -10,7 +10,7 @@ pathOutputFolder = [pathImagesToProcessFolder 'SP' filesep];
 mkdir(pathOutputFolder);
 
 %Find all Files with .nii-Ending in Input Folder
-subj=dir(strcat(pathImagesToProcessFolder,'Dev*.nii'));
+subj=dir(strcat(pathImagesToProcessFolder,'DevInc*.nii'));
 numberOfFiles=length(subj);
 
 %% Run through all files in the input folder
